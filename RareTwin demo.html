@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RareTwin demo</title>
+<style>
+:root{--bg:#f6f6f8;--card:#fff;--ink:#1a1a1f;--mut:#6b6b76;--line:#dcdce3;--pink:#e91e63;--blue:#1a4fa3;--purple:#7b2ff7;--green:#1b9e4b;--amber:#f08a1c;--red:#d63a3a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15151a;--card:#1e1e25;--ink:#f0f0f4;--mut:#9a9aa6;--line:#34343e}}
+:root[data-theme="dark"]{--bg:#15151a;--card:#1e1e25;--ink:#f0f0f4;--mut:#9a9aa6;--line:#34343e}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Helvetica Neue",Arial,sans-serif}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:16px 20px}
+h1{font-size:20px;margin:0}.badge{font-size:12px;border:1px solid var(--line);border-radius:99px;padding:2px 10px;color:var(--mut)}
+nav{display:flex;gap:8px;padding:0 20px 14px;flex-wrap:wrap}
+nav button{border:2px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
+nav button.on[data-t="0"]{border-color:var(--pink);color:var(--pink)}nav button.on[data-t="1"]{border-color:var(--blue);color:var(--blue)}nav button.on[data-t="2"]{border-color:var(--purple);color:var(--purple)}
+main{padding:0 20px 28px;max-width:1000px;margin:auto}
+.view{display:none;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}.view.on{display:block}
+.pt{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--mut);border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px}
+.pt b{color:var(--ink)}
+#chat{min-height:280px;max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px}
+.m{max-width:82%;padding:9px 12px;border-radius:12px}.m.u{align-self:flex-end;background:var(--pink);color:#fff}
+.m.a{align-self:flex-start;background:var(--bg);border:1px solid var(--line)}.m.s{align-self:flex-start;background:transparent;border:1px dashed var(--blue)}
+.src{display:inline-block;font-size:11px;margin:6px 6px 0 0;padding:1px 8px;border-radius:99px;background:rgba(26,79,163,.12);color:var(--blue)}
+.conf{font-size:11px;color:var(--mut)}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.acts button,.run{border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:7px 12px;border-radius:8px;font:inherit;font-size:13px;cursor:pointer}
+.acts button:hover,.run:hover{border-color:var(--pink)}.acts button:disabled{opacity:.4;cursor:default}
+.tog{display:flex;gap:8px;margin-bottom:8px}.tog button{border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:6px 12px;border-radius:8px;font:inherit;font-size:13px;cursor:pointer}
+.tog button.on{border-color:var(--blue);color:var(--blue);font-weight:700}
+svg text{fill:var(--mut);font-size:11px}
+.leg{display:flex;gap:16px;font-size:12px;color:var(--mut);flex-wrap:wrap;margin-top:6px}.leg i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px}
+.img{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
+.img div{flex:1 1 220px;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13px}
+.ill{height:70px;border-radius:8px;margin-bottom:8px;background:radial-gradient(circle at 50% 50%,#5b6a8c 0,#2b3350 60%,#161a2b 100%);position:relative}
+.ill:after{content:"ILLUSTRATIVE";position:absolute;right:6px;bottom:4px;font-size:9px;color:#fff;opacity:.7}
+.kpi{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0 14px}.kpi div{flex:1 1 130px;border:1px solid var(--line);border-radius:10px;padding:10px}
+.kpi strong{display:block;font-size:24px}.kpi span{font-size:12px;color:var(--mut)}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:8px;text-align:center;border:1px solid var(--line)}th:first-child,td:first-child{text-align:left}
+.wrap{overflow-x:auto}.note{font-size:12px;color:var(--mut);margin-top:10px}
+.ask{display:flex;gap:8px;margin-top:12px}.ask input{flex:1;min-width:0;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}.ask input:focus{outline:2px solid var(--pink);outline-offset:1px}.ask button{border:0;background:var(--pink);color:#fff;border-radius:10px;padding:0 20px;font:inherit;font-weight:700;cursor:pointer}.ask button:disabled{opacity:.5;cursor:default}.sugg{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.sugg button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:5px 12px;font:inherit;font-size:12.5px;cursor:pointer}.sugg button:hover{border-color:var(--pink);color:var(--pink)}.t{white-space:pre-wrap}.m.s{font-size:14px}#mode button.on{border-color:var(--pink);color:var(--pink)}
+@media(max-width:560px){.m{max-width:94%}}
+</style></head><body>
+<header><h1>RareTwin</h1><span class="badge">Synthetic patient avatars for rare diseases</span><span class="badge">Demo data: not real patients</span></header>
+<nav>
+<button class="on" data-t="0">1 · Avatar chat</button><button data-t="1" class="">2 · Lab and imaging trajectory</button><button data-t="2">3 · Stress-test dashboard</button></nav>
+<main>
+<section class="view on" id="v0">
+<div class="pt"><span><b>Avatar #FB-0417</b> (synthetic)</span><span>Male, 24 y</span><span>Disease profile: Fabry disease (ORPHA:324)</span><span>Variant class: classic</span></div>
+<div class="tog" id="mode"><button class="on" data-md="patient">Ask the patient</button><button data-md="expert">Ask the Fabry consultant</button></div>
+<div id="chat"></div>
+<div class="sugg" id="sugg"></div>
+<div class="ask"><input id="q" type="text" placeholder="Ask anything: symptoms, disease history, genetics, treatment, or order any test" autocomplete="off"><button id="send">Ask</button></div>
+<div class="note">Quick orders (instant results):</div>
+<div class="acts" id="acts"></div>
+</section>
+<section class="view" id="v1">
+<div class="pt"><span><b>Avatar #FB-0417</b></span><span>Shaded band = 90% uncertainty range from the disease model</span></div>
+<div class="tog" id="tog"><button class="on" data-m="egfr">eGFR (kidney)</button><button data-m="lyso">Plasma lyso-Gb3</button><button data-m="lvmi">LV mass index (echo)</button></div>
+<svg id="ch" viewBox="0 0 640 280" width="100%" role="img" aria-label="Trajectory chart"></svg>
+<div class="leg"><span><i style="background:var(--red)"></i>Untreated</span><span><i style="background:var(--green)"></i>Enzyme therapy from age 28</span></div>
+<div class="img">
+<div><div class="ill"></div><b>Echocardiogram</b><br>Concentric LV thickening, progressing from age 32 untreated. Confidence: moderate.<br><span class="src">PubMed</span><span class="src">Orphanet</span></div>
+<div><div class="ill" style="background:radial-gradient(circle at 40% 50%,#8a6a6a 0,#4a3030 60%,#241414 100%)"></div><b>Slit-lamp (cornea)</b><br>Whorl-like corneal verticillata. Confidence: high.<br><span class="src">HPO:0007957</span></div>
+</div>
+<p class="note">Imaging is shown as labelled illustrative findings.</p>
+</section>
+<section class="view" id="v2">
+<div class="pt"><span><b>Diagnostic classifier v0.3</b> tested on a batch of synthetic avatars</span></div>
+<div class="kpi"><div><strong id="k1">0</strong><span>avatars generated</span></div><div><strong id="k2">0%</strong><span>overall correct</span></div><div><strong id="k3">0</strong><span>failure clusters</span></div></div>
+<button class="run" id="run">Run 500 atypical avatars</button>
+<div class="wrap" style="margin-top:12px"><table id="tb"><thead><tr><th>Accuracy by group</th><th>Classic</th><th>Late-onset</th><th>Atypical</th></tr></thead><tbody></tbody></table></div>
+<p class="note" id="fn">Press Run to generate the batch. Cells show how often the classifier names the right disease; red cells are where it fails.</p>
+</section>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+document.querySelectorAll('.view').forEach((v,i)=>v.classList.toggle('on',i==b.dataset.t));});
+/* chat */
+const chat=$('#chat'),acts=$('#acts');
+const S=(t)=>`<span class="src">${t}</span>`;
+const flow=[
+{q:"What brings you in today?",a:"Doctor, it's my hands and feet. Burning, tingling pain, mostly when I have a fever or after football. It started when I was about nine. I also barely sweat, and I get hot very quickly.",s:S("Orphanet ORPHA:324")+S("HPO:0012535")+'<div class="conf">Confidence: high (documented early symptom)</div>'},
+{q:"Examine the skin",a:"Examination: a cluster of small dark-red, non-blanching spots around the umbilicus and upper thighs (angiokeratomas).",s:S("PubMed")+S("HPO:0001014")+'<div class="conf">Confidence: moderate. Present in about two thirds of classic male cases.</div>',sys:true},
+{q:"Ask about family history",a:"My mum has had kidney trouble and my uncle on her side died young of a stroke. Nobody ever told us why.",s:S("OMIM 301500")+'<div class="conf">X-linked inheritance pattern; confidence: high</div>'},
+{q:"Order: urine protein",a:"Result: urine protein/creatinine ratio mildly raised (0.19 g/g, range 0.10–0.30). Early albuminuria is consistent with Fabry nephropathy but not specific.",s:S("PubMed")+'<div class="conf">Confidence: moderate</div>',sys:true},
+{q:"Order: plasma lyso-Gb3",a:"Result: lyso-Gb3 markedly elevated (68 nmol/L, range 40–110; reference below 2). Alpha-galactosidase A activity suggested next to confirm.",s:S("Orphanet")+S("PubMed")+'<div class="conf">Confidence: high for classic males</div>',sys:true},
+];
+const H=[];function add(c,h){const d=document.createElement('div');d.className='m '+c;d.innerHTML=h;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;H.push({c,t:d.textContent});return d;}
+add('s','Synthetic avatar ready. Ask questions, examine, or order tests. Every finding shows its source and confidence.');
+flow.forEach((f,i)=>{const b=document.createElement('button');b.textContent=f.q;b.onclick=()=>{b.disabled=true;
+add('u',f.q);setTimeout(()=>add(f.sys?'s':'a',f.a+'<br>'+f.s),350);};acts.appendChild(b);});
+const fb=document.createElement('button');fb.textContent="Show feedback on missed clues";fb.onclick=()=>{
+const miss=flow.filter((f,i)=>[...acts.children][i].disabled===false).map(f=>f.q);
+add('s',miss.length?'Not yet asked: '+miss.join('; ')+'. These help distinguish Fabry from juvenile arthritis or erythromelalgia.':'You covered every key clue. A diagnosis of Fabry disease is supported.');};acts.appendChild(fb);
+/* chart */
+const D={
+egfr:{t:"eGFR (mL/min/1.73 m²)",lo:50,hi:130,ages:[24,28,32,36,40],un:[112,104,94,82,68],tr:[112,104,100,95,90],w:[4,6,9,12,15]},
+lyso:{t:"Plasma lyso-Gb3 (nmol/L)",lo:0,hi:140,ages:[24,28,32,36,40],un:[68,76,84,92,100],tr:[68,76,22,15,12],w:[10,12,14,16,18]},
+lvmi:{t:"LV mass index (g/m²)",lo:60,hi:160,ages:[24,28,32,36,40],un:[85,92,106,122,138],tr:[85,92,93,95,98],w:[5,6,8,10,12]}};
+function draw(k){const d=D[k],X=a=>60+(a-24)/16*540,Y=v=>240-(v-d.lo)/(d.hi-d.lo)*210;let h='';
+for(let i=0;i<=4;i++){const v=d.lo+i*(d.hi-d.lo)/4;h+=`<line x1="60" x2="600" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="52" y="${Y(v)+4}" text-anchor="end">${Math.round(v)}</text>`;}
+d.ages.forEach(a=>h+=`<text x="${X(a)}" y="262" text-anchor="middle">${a} y</text>`);
+const band=(s,c)=>{let up=d.ages.map((a,i)=>`${X(a)},${Y(s[i]+d.w[i])}`),dn=d.ages.map((a,i)=>`${X(a)},${Y(s[i]-d.w[i])}`).reverse();return `<polygon points="${up.concat(dn).join(' ')}" fill="${c}" opacity=".18"/><polyline fill="none" stroke="${c}" stroke-width="2.5" points="${d.ages.map((a,i)=>X(a)+','+Y(s[i])).join(' ')}"/>`};
+h+=band(d.un,'#d63a3a')+band(d.tr,'#1b9e4b')+`<line x1="${X(28)}" x2="${X(28)}" y1="20" y2="240" stroke="var(--mut)" stroke-dasharray="4 4"/><text x="${X(28)+4}" y="30">therapy starts</text><text x="60" y="14">${d.t}</text>`;
+$('#ch').innerHTML=h;}
+draw('egfr');
+document.querySelectorAll('#tog button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tog button').forEach(x=>x.classList.remove('on'));b.classList.add('on');draw(b.dataset.m);});
+/* stress test */
+const R=[["Fabry disease",[96,81,52]],["Wilson disease",[93,74,46]],["Hereditary angioedema",[97,85,61]]];
+const col=v=>v>=85?'rgba(27,158,75,.25)':v>=65?'rgba(240,138,28,.3)':'rgba(214,58,58,.35)';
+$('#run').onclick=()=>{let n=0;const t=setInterval(()=>{n+=50;$('#k1').textContent=n;if(n>=500){clearInterval(t);fin();}},60);};
+function fin(){$('#k2').textContent='77%';$('#k3').textContent='4';
+$('#tb tbody').innerHTML=R.map(r=>`<tr><td>${r[0]}</td>${r[1].map(v=>`<td style="background:${col(v)}"><b>${v}%</b></td>`).join('')}</tr>`).join('');
+$('#fn').innerHTML='Biggest failure: atypical presentations (female carriers, late-onset with no pain history). Demo figures, not a validated benchmark.';}
+/* live AI */
+let mode='patient';
+const PROF="AVATAR FB-0417 (synthetic): male, 24, classic Fabry disease (X-linked, GLA variant, alpha-galactosidase A activity very low). Acroparesthesia from age 9 triggered by fever and exercise, hypohidrosis and heat intolerance, angiokeratomas on trunk and thighs, post-meal abdominal cramps, mild tinnitus, corneal verticillata. Mild albuminuria (UPCR 0.19 g/g), eGFR 112, plasma lyso-Gb3 68 nmol/L, echo currently normal, untreated. Family: mother has chronic kidney disease, maternal uncle died of stroke at 41, sister has mild symptoms. Studies engineering, plays football, worries about missing classes.";
+const RULES={patient:"You are the synthetic patient in the profile. Reply in first person as a 24-year-old layperson: only what the patient would plausibly know and say, natural, 1-4 sentences. Never name the diagnosis unless the clinician already told you. If the clinician orders a test or examination, reply instead as a SYSTEM RESULT starting with the words SYSTEM RESULT: concise, realistic values with reference ranges, consistent with the profile.",expert:"You are a senior consultant in lysosomal storage disorders answering a clinician or student about Fabry disease: history (Fabry and Anderson 1898, discovery of the enzyme defect, enzyme replacement and chaperone therapy milestones), genetics, pathophysiology, phenotypes, diagnosis, screening, treatment, prognosis, and where useful how this avatar's profile illustrates the point. Be accurate, 3-8 sentences, and say so if unsure. If asked about another disease, say this demo covers Fabry in depth and give brief high-level help."};
+const FMT="Use plain text, no markdown. End with one final line in exactly this form: SOURCES: <one to three real source types separated by semicolons, e.g. Orphanet ORPHA:324; OMIM 301500; GeneReviews; never invent PMIDs or URLs> | CONFIDENCE: <high, moderate or low> - <short reason>";
+const SG={patient:["When did the pain start?","Any trouble with sweating or heat?","Tell me about your family","Any stomach or hearing problems?"],expert:["Who first described Fabry disease, and when?","Why are female carriers often missed?","Enzyme therapy vs migalastat: how do they differ?","What would you screen for next in this patient?"]};
+function sg(){const el=$('#sugg');el.innerHTML='';SG[mode].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>ask(t);el.appendChild(b);});}
+document.querySelectorAll('#mode button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#mode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');mode=b.dataset.md;add('s',mode==='patient'?'Patient mode: the avatar answers as the patient. Ask history questions or order any test.':'Consultant mode: ask about Fabry disease history, genetics, diagnosis or treatment.');sg();});
+sg();
+async function ask(q){q=q.trim();if(!q||$('#send').disabled)return;$('#q').value='';
+add('u',q.replace(/</g,'&lt;'));
+const s=window.claude?await claude.use('sample'):null;
+if(!s){add('s','Live AI is not available in this view. Use the quick orders below.');return;}
+$('#send').disabled=true;
+const d=document.createElement('div');d.className='m a';d.innerHTML='<span class="t">Thinking...</span><div class="meta"></div>';chat.appendChild(d);
+const tr=H.slice(-14).map(x=>(x.c==='u'?'CLINICIAN: ':x.c==='s'?'SYSTEM: ':'AVATAR: ')+x.t).join('\n');
+const prompt=RULES[mode]+'\n\nPROFILE: '+PROF+'\n\nCONVERSATION SO FAR:\n'+tr+'\n\nRespond to the last CLINICIAN line only. '+FMT;
+const split=t=>{const i=t.indexOf('SOURCES:');return i<0?[t.trim(),'']:[t.slice(0,i).trim(),t.slice(i)];};
+const paint=t=>{const [a,m]=split(t);d.className='m '+(/^SYSTEM/i.test(a)?'s':'a');d.querySelector('.t').textContent=a;chat.scrollTop=chat.scrollHeight;return [a,m];};
+try{const r=await s(prompt,{cache:false,onText:({text})=>paint(text)});
+const [a,m]=paint(r.text);H.push({c:d.className.slice(2),t:a});
+const mm=m.match(/SOURCES:\s*([\s\S]*?)\s*\|\s*CONFIDENCE:\s*([\s\S]*)$/);
+if(mm){const mt=d.querySelector('.meta');mm[1].split(/\s*;\s*/).filter(Boolean).forEach(x=>{const e=document.createElement('span');e.className='src';e.textContent=x;mt.appendChild(e);});const c=document.createElement('div');c.className='conf';c.textContent='Confidence: '+mm[2].trim();mt.appendChild(c);}
+}catch(e){d.className='m s';d.querySelector('.t').textContent=e&&e.code==='not_granted'?'Live AI was not allowed for this page. Reopen it and accept the prompt, or use the quick orders.':e&&e.code==='rate_limited'?'Too many requests. Wait a few seconds and ask again.':'Could not reach the AI. Please try again.';}
+finally{$('#send').disabled=false;$('#q').focus();}}
+$('#send').onclick=()=>ask($('#q').value);
+$('#q').onkeydown=e=>{if(e.key==='Enter')ask($('#q').value);};
+</script></body></html>
